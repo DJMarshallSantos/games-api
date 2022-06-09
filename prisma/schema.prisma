@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+
+  name     String
+  email    String    @unique
+  password String
+  cpf      String    @unique
+  isAdmin  Boolean   @default(false) @map("is_admin")
+  profiles Profile[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model Profile {
+  id String @id @default(uuid())
+
+  title        String
+  imageUrl     String        @map("image_url")
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String        @map("user_id")
+  games        GameProfile[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("profile")
+}
+
+model Game {
+  id String @id @default(uuid())
+
+  title              String        @unique
+  coverImageUrl      String        @map("cover_image")
+  description        String
+  year               Int
+  imdbScore          Float         @map("imb_score")
+  trailerYouTubeUrl  String        @map("trailer_youtube_url")
+  gameplayYouTubeUrl String        @map("gameplay_youtube_url")
+  genres             Genre[]
+  games              GameProfile[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("game")
+}
+
+model Genre {
+  id String @id @default(uuid())
+
+  name        String       @unique
+  games       Game[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("gender")
+
+}
+
+
+model GameProfile {
+  id        String  @id @default(uuid())
+  game      Game    @relation(fields: [gameId], references: [id])
+  gameId    String  @map("game_id")
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId String  @map("profile_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  isFavorite Boolean @default(false) @map("is_favorite")
+
+  @@map("game_profile")
+}
