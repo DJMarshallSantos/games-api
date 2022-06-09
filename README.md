@@ -1,4 +1,4 @@
-# Api - Comic Book Organizer
+# Games - Api
 ### Project 02 - Module 4 (Backend)
 ## _Blue Ed Tech, Class 12 - 2022_
 
