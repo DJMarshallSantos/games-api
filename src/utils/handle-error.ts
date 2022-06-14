@@ -10,6 +10,6 @@ export function handleError(error: Error): undefined {
 
   throw new BadRequestException(
     lastErrorLine ||
-      'Opa, ocorreu um pequeno erro, as capivaras da assistencia já estão trabalhando para corrigir. Por favor atualize a pagina e tente novamente.',
+      'Ocorreu um erro. Por favor, refresh a página e tennte novamente.',
   );
 }
