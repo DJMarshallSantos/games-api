@@ -1,29 +1,35 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
-import { GameService } from './game.service';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
+import { LoggedUser } from 'src/auth/logged-user.decorator';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Game } from './entities/game-entity';
+import { GameService } from './game.service';
 
-@ApiTags('Game')
+@ApiTags('game')
 @Controller('game')
 export class GameController {
   constructor(private readonly gameService: GameService) {}
 
   @Post()
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Adicionar novo jogo a coleção.',
+    summary: 'Admin - Adicionar novo jogo a coleção.',
   })
-  create(@Body() dto: CreateGameDto): Promise<Game> {
-    return this.gameService.create(dto);
+  create(@LoggedUser() user: User, @Body() dto: CreateGameDto): Promise<Game> {
+    return this.gameService.create(user, dto);
   }
 
   @Get()
@@ -43,18 +49,26 @@ export class GameController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Editar dados de um jogo através do  ID.',
+    summary: 'Admin - Editar dados de um jogo através do  ID.',
   })
-  update(@Param('id') id: string, @Body() dto: UpdateGameDto): Promise<Game> {
-    return this.gameService.update(id, dto);
+  update(
+    @LoggedUser() user: User,
+    @Param('id') id: string,
+    @Body() dto: UpdateGameDto,
+  ): Promise<Game> {
+    return this.gameService.update(id, dto, user);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Deletar um jogo através do ID.',
+    summary: 'Admin - Deletar um jogo através do ID.',
   })
-  delete(@Param('id') id: string) {
-    return this.gameService.delete(id);
+  delete(@LoggedUser() user: User, @Param('id') id: string) {
+    return this.gameService.delete(id, user);
   }
 }

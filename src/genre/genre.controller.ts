@@ -6,24 +6,33 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { GenreService } from './genre.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Genre } from './entities/genre.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { LoggedUser } from 'src/auth/logged-user.decorator';
+import { User } from '@prisma/client';
 
-@ApiTags('Genre')
+@ApiTags('genre')
 @Controller('genre')
 export class GenreController {
   constructor(private readonly genreService: GenreService) {}
 
   @Post()
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Criar novo Gênero.',
   })
-  create(@Body() dto: CreateGenreDto): Promise<Genre> {
-    return this.genreService.create(dto);
+  create(
+    @LoggedUser() user: User,
+    @Body() dto: CreateGenreDto,
+  ): Promise<Genre> {
+    return this.genreService.create(dto, user);
   }
 
   @Get()
@@ -43,18 +52,26 @@ export class GenreController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Editar um gênero por ID.',
   })
-  update(@Param('id') id: string, @Body() dto: UpdateGenreDto): Promise<Genre> {
-    return this.genreService.update(id, dto);
+  update(
+    @LoggedUser() user: User,
+    @Param('id') id: string,
+    @Body() dto: UpdateGenreDto,
+  ): Promise<Genre> {
+    return this.genreService.update(id, dto, user);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Deletar um gênero por ID.',
   })
-  delete(@Param('id') id: string) {
-    return this.genreService.delete(id);
+  delete(@LoggedUser() user: User, @Param('id') id: string) {
+    return this.genreService.delete(id, user);
   }
 }

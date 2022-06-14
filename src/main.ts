@@ -12,6 +12,17 @@ async function bootstrap() {
     .setTitle('Games Api')
     .setDescription('Plataforma para gestão dos jogos.')
     .setVersion('1.0')
+    .addTag('status')
+    .addTag('login')
+    .addTag('signup')
+    .addTag('isAdmin')
+    .addTag('user')
+    .addTag('profile')
+    .addTag('genre')
+    .addTag('game')
+    .addTag('profile-games')
+    .addTag('homepage')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

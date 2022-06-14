@@ -6,13 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ProfileGameService } from './profile-games.service';
 import { CreateProfileGameDto } from './dto/create-profile-game';
 import { UpdateProfileGameDto } from './dto/update-profile-game';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { User } from 'src/user/entities/user.entity';
+import { LoggedUser } from 'src/auth/logged-user.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
-@ApiTags('Profile-games')
+@ApiTags('profile-games')
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 @Controller()
 export class ProfileGameController {
   constructor(private readonly profileGameService: ProfileGameService) {}
@@ -25,11 +31,12 @@ export class ProfileGameController {
     return this.profileGameService.addGame(dto);
   }
 
+  @ApiTags('homepage')
   @Get('homepage/:profileId')
   @ApiOperation({
     summary: 'Lista de Jogos de determinado perfil com genero e favoritos.',
   })
-  findOne(@Param('profileId') id: string) {
+  findOne(@LoggedUser() user: User, @Param('profileId') id: string) {
     return this.profileGameService.findOneProfile(id);
   }
 
