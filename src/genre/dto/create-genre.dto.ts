@@ -5,7 +5,7 @@ export class CreateGenreDto {
   @IsLowercase()
   @ApiProperty({
     description: 'Adicione um um novo gênero',
-    example: 'TPS',
+    example: 'tps',
   })
   name: string;
 }

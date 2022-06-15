@@ -58,7 +58,7 @@ export class CreateGameDto {
   @IsString()
   @ApiProperty({
     description: 'Genero dos jogos',
-    example: 'FTS',
+    example: 'fts',
   })
   genres: string;
 }

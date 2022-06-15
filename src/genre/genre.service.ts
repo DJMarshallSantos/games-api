@@ -22,8 +22,14 @@ export class GenreService {
     return this.prisma.genre.create({ data }).catch(handleError);
   }
 
-  async findAll(): Promise<Genre[]> {
-    const list = await this.prisma.genre.findMany();
+  async findAll() {
+    const list = await this.prisma.genre.findMany({
+      select: {
+        id: true,
+        name: true,
+        games: true,
+      },
+    });
 
     if (list.length === 0) {
       throw new NotFoundException(

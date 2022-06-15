@@ -39,7 +39,7 @@ export class GenreController {
   @ApiOperation({
     summary: 'Listar todos os Gêneros.',
   })
-  findAll(): Promise<Genre[]> {
+  findAll() {
     return this.genreService.findAll();
   }
 
